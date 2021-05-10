@@ -11,3 +11,9 @@ targets:
 crystal: 1.0.0
 
 license: MIT
+
+dependencies:
+  admiral:
+    github: jwaldrip/admiral.cr
+  monads:
+    github: alex-lairan/monads

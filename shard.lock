@@ -1,0 +1,10 @@
+version: 2.0
+shards:
+  admiral:
+    git: https://github.com/jwaldrip/admiral.cr.git
+    version: 1.11.4
+
+  monads:
+    git: https://github.com/alex-lairan/monads.git
+    version: 1.0.0
+
