@@ -32,19 +32,19 @@ jobs:
       - name: Install dependencies
         run: shards install
   
-      - name: Build concurry binary
+      - name: Build cver binary
         run: |
           mkdir dist
-          crystal build ./src/concurry.cr \
+          crystal build ./src/cver.cr \
             --release \
             --progress \
             --static \
-            -o ./dist/concurry-${{ matrix.name }}
+            -o ./dist/cver-${{ matrix.name }}
       - name: upload artifacts
         uses: actions/upload-artifact@master
         with:
-          name: concurry-${{ matrix.name }}
-          path: ./dist/concurry-${{ matrix.name }}
+          name: cver-${{ matrix.name }}
+          path: ./dist/cver-${{ matrix.name }}
 
   publish:
     name: "Publish releases"
@@ -59,15 +59,15 @@ jobs:
       - name: "Setup directory"
         run: mkdir -p ${{ env.ARTIFACT_DIR }}
       # Artifacts
-      - name: Download artifacts [concurry-alpine]
+      - name: Download artifacts [cver-alpine]
         uses: actions/download-artifact@master
         with:
-          name: concurry-alpine
+          name: cver-alpine
           path: ${{ env.ARTIFACT_DIR }}
-      - name: Download artifacts [concurry-ubuntu]
+      - name: Download artifacts [cver-ubuntu]
         uses: actions/download-artifact@master
         with:
-          name: concurry-ubuntu
+          name: cver-ubuntu
           path: ${{ env.ARTIFACT_DIR }}
 
       - uses: svenstaro/upload-release-action@v2
