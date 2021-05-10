@@ -1,11 +1,5 @@
 require "monads"
 
-enum Bump
-  Major
-  Minor
-  Patch
-end 
-
 struct Version
   include Comparable(Version)
 
@@ -14,16 +8,16 @@ struct Version
   def initialize(@major : Int16, @minor : Int16, @patch : Int16)
   end
 
-  def bump(change : Bump)
+  def bump(change : String)
     case change
-      when Bump::Major
+      when "major"
         @major += 1
         @minor = 0
         @patch = 0
-      when Bump::Minor
+      when "minor"
         @minor += 1
         @patch = 0
-      when Bump::Patch
+      when "patch"
         @patch += 1
     end 
     self 
@@ -46,7 +40,7 @@ struct Version
   end
 
   def to_s
-    "#{value.major}.#{value.minor}.#{value.patch}}"
+    "#{@major}.#{@minor}.#{@patch}"
   end
 
   def self.of_s(value : String)
