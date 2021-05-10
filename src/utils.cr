@@ -5,6 +5,10 @@ module Utils
     io.close
     text = io.to_s
     # Remove EOF
-    text[0, text.size - 1]
+    if text.size == 0
+      nil
+    else
+      text[0, text.size - 1]
+    end
   end
 end

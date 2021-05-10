@@ -7,7 +7,7 @@ require "./git"
 # git symbolic-ref --short -q HEAD
 # git status --porcelain=v1 2>/dev/null | wc -l
 
-Git.has_changes()
+puts Git.has_changes()
 # result = Version.of_s("1.1.0") <=> Version.of_s("2.0.0")
 # puts Version.of_s("1.1.0").bump(Bump::Major)
 
