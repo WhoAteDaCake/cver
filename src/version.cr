@@ -49,10 +49,11 @@ struct Version
     if parts.size < 3
       raise "Unexpected format: #{value}"
     else
+      parts = parts.map(&.to_i16)
       self.new(
-        parts[0].to_i16,
-        parts[1].to_i16,
-        parts[2].to_i16
+        parts[0],
+        parts[1],
+        parts[2]
       )
     end
   end
