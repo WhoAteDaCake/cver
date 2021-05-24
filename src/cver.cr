@@ -20,7 +20,7 @@ def validate()
   end
 
   begin
-    tags = Git.read_tags(root_dir).map { | v | Version.of_s v }
+    tags = Git.read_tags(root_dir).map { | v | Version.of_s v }.sort { |a, b| b <=> a }
   rescue ex
     puts "Failed to parse tags:\n  > #{ex.message}"
     exit(1)
