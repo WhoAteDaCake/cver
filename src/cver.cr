@@ -1,40 +1,32 @@
 require "admiral"
 require "./version"
 require "./git"
-
-# git rev-parse --show-toplevel
-# .git/refs/tags/
-# git symbolic-ref --short -q HEAD
-# git push --all origin
+require "./logger"
 
 def validate()
-  # changes = Git.has_changes()
-  # if !changes.nil?
-  #   puts "Changes found:\n#{changes}\nCommit before continuing"
-  #   exit(1)
-  # end
-  root_dir = Git.root_dir()
-  if root_dir.nil?
-    puts "Could not find root directory for repository, have you ran git init?"
+  changes = Git.has_changes()
+  if !changes.nil?
+    Cver::Log.fatal { "Changes found:\n#{changes}\nCommit before continuing" }
     exit(1)
   end
 
-  begin
-    tags = Git.read_tags(root_dir).map { | v | Version.of_s v }.sort { |a, b| b <=> a }
-  rescue ex
-    puts "Failed to parse tags:\n  > #{ex.message}"
+  root_dir = Git.root_dir()
+  if root_dir.nil?
+    Cver::Log.fatal { "Could not find root directory for repository, have you ran git init?" }
     exit(1)
   end
+
+  tags = Version.parse_tags(Git.read_tags(root_dir))
 
   branch = Git.branch()
   if branch.nil?
-    puts "Could not find the branch, make sure you are in a git repository"
+    Cver::Log.fatal { "Could not find the branch, make sure you are in a git repository" }
     exit(1)
   end
 
   if tags.size == 0
-    puts "No tags found, please create initial tag"
-    exit(1)
+    Cver::Log.warn { "No tags found, creating initial tag" }
+    {Version.new(0, 0, 1), branch}
   else
     {tags[0], branch}
   end
@@ -57,23 +49,21 @@ class Cver < Admiral::Command
   def run
     aa = arguments.action
     if !ALLOWED_ACTIONS.includes?(aa)
-      puts "Unexpect action: #{aa}\nExpected one of : #{ALLOWED}"
+      Cver::Log.fatal { "Unexpect action: #{aa}\nExpected one of : #{ALLOWED}" }
       exit(1)
     end
     # Now that everything else is confirmed, we can validate environment
     tag, branch = validate()
     new_tag = tag.bump(aa).to_s
     
-    puts "Pushing changes to the branch [#{branch}]"
+    Cver::Log.info { "Pushing changes to the branch [#{branch}]" }
     Git.push(branch)
 
-    puts "Creating new tag [#{new_tag}]"
+    Cver::Log.info { "Creating new tag [#{new_tag}]" }
     Git.tag(new_tag)
 
-    puts "Pushing new tag [#{new_tag}]"
+    Cver::Log.info { "Pushing new tag [#{new_tag}]" }
     Git.push(new_tag)
-
-    puts "Done"
   end
 end
 

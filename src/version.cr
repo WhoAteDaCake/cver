@@ -1,4 +1,4 @@
-require "monads"
+require "./logger"
 
 struct Version
   include Comparable(Version)
@@ -56,5 +56,17 @@ struct Version
         parts[2]
       )
     end
+  end
+
+  def self.parse_tags(tags : Array(String))
+    tags = tags.reduce([] of Version) do |acc, v|
+      begin
+        acc << Version.of_s v
+      rescue ex
+        Cver::Log.warn { "Unexpected version format: #{v}" }
+      end
+      acc
+    end
+    tags.sort { |a, b| b <=> a }
   end
 end
