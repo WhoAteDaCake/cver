@@ -63,7 +63,7 @@ struct Version
       begin
         acc << Version.of_s v
       rescue ex
-        Cver::Log.warn { "Unexpected version format: #{v}" }
+        Logger::Log.warn { "Unexpected version format: #{v}" }
       end
       acc
     end

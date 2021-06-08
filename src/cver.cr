@@ -6,13 +6,13 @@ require "./logger"
 def validate()
   changes = Git.has_changes()
   if !changes.nil?
-    Cver::Log.fatal { "Changes found:\n#{changes}\nCommit before continuing" }
+    Logger::Log.fatal { "Changes found:\n#{changes}\nCommit before continuing" }
     exit(1)
   end
 
   root_dir = Git.root_dir()
   if root_dir.nil?
-    Cver::Log.fatal { "Could not find root directory for repository, have you ran git init?" }
+    Logger::Log.fatal { "Could not find root directory for repository, have you ran git init?" }
     exit(1)
   end
 
@@ -20,12 +20,12 @@ def validate()
 
   branch = Git.branch()
   if branch.nil?
-    Cver::Log.fatal { "Could not find the branch, make sure you are in a git repository" }
+    Logger::Log.fatal { "Could not find the branch, make sure you are in a git repository" }
     exit(1)
   end
 
   if tags.size == 0
-    Cver::Log.warn { "No tags found, creating initial tag" }
+    Logger::Log.warn { "No tags found, creating initial tag" }
     {Version.new(0, 0, 1), branch}
   else
     {tags[0], branch}
@@ -49,20 +49,20 @@ class Cver < Admiral::Command
   def run
     aa = arguments.action
     if !ALLOWED_ACTIONS.includes?(aa)
-      Cver::Log.fatal { "Unexpect action: #{aa}\nExpected one of : #{ALLOWED}" }
+      Logger::Log.fatal { "Unexpect action: #{aa}\nExpected one of : #{ALLOWED}" }
       exit(1)
     end
     # Now that everything else is confirmed, we can validate environment
     tag, branch = validate()
     new_tag = tag.bump(aa).to_s
     
-    Cver::Log.info { "Pushing changes to the branch [#{branch}]" }
+    Logger::Log.info { "Pushing changes to the branch [#{branch}]" }
     Git.push(branch)
 
-    Cver::Log.info { "Creating new tag [#{new_tag}]" }
+    Logger::Log.info { "Creating new tag [#{new_tag}]" }
     Git.tag(new_tag)
 
-    Cver::Log.info { "Pushing new tag [#{new_tag}]" }
+    Logger::Log.info { "Pushing new tag [#{new_tag}]" }
     Git.push(new_tag)
   end
 end
